@@ -1,0 +1,101 @@
+﻿@using System.Activities.Statements
+@using System.Drawing
+@model Ilm.CodeAudition.Web.Models.TimeSheetsViewModel
+
+@{
+    ViewBag.Title = "Timesheet";
+    Layout = "../Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Save", "Timesheet"))
+{
+<table>
+    <tr>
+        <th>
+            Project
+        </th>
+        <th>
+            Mon
+        </th>
+        <th>
+            Tue
+        </th>
+        <th>
+            Wed
+        </th>
+        <th>
+            Thu
+        </th>
+        <th>
+            Fri
+        </th>
+        <th>
+            Total
+        </th>
+        <th></th>
+    </tr>
+    @if (Model.ProjectTimeSheets.Any())
+    {
+        for (var timeSheetIndex = 0; timeSheetIndex < Model.ProjectTimeSheets.Count; timeSheetIndex++)
+        {
+            <tr>
+                <td>
+                    @Html.HiddenFor(x => Model.ProjectTimeSheets[timeSheetIndex].Id)
+                    @Html.HiddenFor(x => Model.ProjectTimeSheets[timeSheetIndex].EmployeeId)
+                    @Html.TextBoxFor(x => Model.ProjectTimeSheets[timeSheetIndex].ProjectName, new {@class ="pname"})
+                </td>
+                <td>@Html.TextBoxFor(x => Model.ProjectTimeSheets[timeSheetIndex].Monday, new { size = 2 , @class="hour"})</td>
+                <td>@Html.TextBoxFor(x => Model.ProjectTimeSheets[timeSheetIndex].Tuesday, new { size = 2, @class = "hour" })</td>
+                <td>@Html.TextBoxFor(x => Model.ProjectTimeSheets[timeSheetIndex].Wednesday, new { size = 2, @class = "hour" })</td>
+                <td>@Html.TextBoxFor(x => Model.ProjectTimeSheets[timeSheetIndex].Thursday, new { size = 2, @class = "hour" })</td>
+                <td>@Html.TextBoxFor(x => Model.ProjectTimeSheets[timeSheetIndex].Friday, new { size = 2, @class = "hour" })</td>
+                <td>@Html.DisplayFor(x => Model.ProjectTimeSheets[timeSheetIndex].Total, new { size = 2 })</td>
+                <td><a href="@Url.Action("Delete", new {id = Model.ProjectTimeSheets[timeSheetIndex].Id})">Delete Project</a></td>
+            </tr>
+        }
+    }
+    <tr>
+        <td colspan="6" align="right">Total Hours:</td>
+        <td>@Model.Total</td>
+    </tr>
+    <tr>
+        <td colspan="4" align="center"><a href="@Url.Action("Add")">Add New Project</a></td>
+        <td colspan="4"><input type="submit" value="UpdateTime" /></td>
+    </tr>
+</table>
+    @section styles{
+        <style>
+            .error {
+                border-color: red;
+            }
+        </style>
+    }
+}
+@section scripts
+{
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script>
+        $(function() {
+            $('form').validate({
+
+        });
+        $(".hour").each(function() {
+            $(this).rules("add",
+                {
+                    digits: true,
+                    messages: { digits: "" }
+                });
+        });
+        $(".pname").each(function() {
+
+            $(this).rules("add",
+                {
+                    required: function(element) {
+                        return element.value === "";
+                        
+                    },
+                    messages: { required: "" }
+                });
+        });
+    });
+    </script>
+}
